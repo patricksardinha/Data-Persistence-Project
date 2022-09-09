@@ -4,10 +4,9 @@ using UnityEngine;
 using System.IO;
 using TMPro;
 
-public class MainManagerMenu : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
-    public static MainManagerMenu Instance;
-    public TextMeshProUGUI playerName;
+    public static MenuManager Instance;
 
     private void Awake()
     {
@@ -19,8 +18,6 @@ public class MainManagerMenu : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        LoadNamePlayer();
     }
 
     [System.Serializable]
@@ -32,23 +29,44 @@ public class MainManagerMenu : MonoBehaviour
     public void SaveNamePlayer()
     {
         SaveData data = new SaveData();
-        data.namePlayer = playerName.text;
+        data.namePlayer = MenuUIHandler.nameEntered;
 
         string json = JsonUtility.ToJson(data);
-        Debug.Log(json);
 
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
 
-    public void LoadNamePlayer()
+
+    public string LoadNamePlayer()
     {
         string path = Application.persistentDataPath + "/savefile.json";
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
-
-            playerName.text = data.namePlayer;
+            
+            return data.namePlayer;
         }
+        return "";
+    }
+
+
+    [System.Serializable]
+    class SaveDataScore
+    {
+        public int bestScore;
+        public string playerBestScore;
+    }
+    public (int, string) LoadOverallBestScore()
+    {
+        string path = Application.persistentDataPath + "/savefilescore.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveDataScore dataScore = JsonUtility.FromJson<SaveDataScore>(json);
+
+            return (dataScore.bestScore, dataScore.playerBestScore);
+        }
+        return (0, "");
     }
 }

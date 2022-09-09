@@ -10,15 +10,19 @@ using TMPro;
 [DefaultExecutionOrder(1000)]
 public class MenuUIHandler : MonoBehaviour
 {
-    public TextMeshProUGUI nameText;
-       
+    public TMP_InputField nameText;
+    public static string nameEntered;
+    public TextMeshProUGUI BestScoreMenuText;
+
     private void Start()
     {
+        BestScoreMenuText.SetText("Best Score " + MenuManager.Instance.LoadOverallBestScore().Item1 + " by " + MenuManager.Instance.LoadOverallBestScore().Item2);
         LoadNameEntered();
-        nameText.text = MainManagerMenu.Instance.playerName.text;
     }
+
     public void StartNew()
     {
+        nameEntered = nameText.text;
         SaveNameEntered();
         SceneManager.LoadScene(1);
     }
@@ -33,11 +37,12 @@ public class MenuUIHandler : MonoBehaviour
 
     public void SaveNameEntered()
     {
-        MainManagerMenu.Instance.SaveNamePlayer();
+        MenuManager.Instance.SaveNamePlayer();
     }
 
     public void LoadNameEntered()
     {
-        MainManagerMenu.Instance.LoadNamePlayer();
+        nameText.text = MenuManager.Instance.LoadNamePlayer();
+
     }
 }
